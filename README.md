@@ -1,8 +1,8 @@
-# Run Lighthouse Report on Multiple Pages
+# Lighthouse Batch Reporter
 
 This script runs a Lighthouse report on multiple pages and saves the results in HTML and JSON.
 
-The reports will be saved in an output directory with a subdirectory with today's date. Use this script to obtain consistent reports on multiple pages, on multiple dates.
+The reports will be saved in an output directory, organized into subdirectories named with today's date. This script ensures consistent reports for multiple pages across different dates.
 
 ## Setup
 
