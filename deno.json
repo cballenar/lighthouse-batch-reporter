@@ -1,0 +1,5 @@
+{
+  "tasks": {
+    "report": "deno run --allow-env --allow-read --allow-sys --allow-run --allow-write --allow-net main.ts"
+  }
+}
