@@ -6,7 +6,7 @@ const inputFilePath = "input.csv";
 const inputFileContent = Deno.readTextFileSync(inputFilePath);
 
 // Read pagesToAudit from text file
-const pagesToAudit = Object.fromEntries(
+const pagesToAudit: { [key: string]: string } = Object.fromEntries(
   inputFileContent
     .split("\n")
     .map((line) => line.split(",").map((part) => part.trim()))
@@ -25,10 +25,14 @@ const options: Flags = {
     disabled: false,
   },
   logLevel: "info",
-  output: ["html", "json"],
+  output: ["html"],
   onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
   port: chrome.port,
 };
+
+// Make an `output` directory and a directory based on today's date `yyyy-mm-dd`.
+const outputDir = `output/${new Date().toISOString().split("T")[0]}`;
+Deno.mkdirSync(outputDir, { recursive: true });
 
 // Iterate over pagesToAudit.
 for (const [pageName, pageUrl] of Object.entries(pagesToAudit)) {
@@ -37,17 +41,13 @@ for (const [pageName, pageUrl] of Object.entries(pagesToAudit)) {
 
   // `.report` is the HTML report as a string.
   if (runnerResult) {
-    // Make an `output` directory and a directory based on today's date `yyyy-mm-dd`.
-    const outputDir = `output/${new Date().toISOString().split("T")[0]}`;
-    Deno.mkdirSync(outputDir, { recursive: true });
-
-    const reportHtml = runnerResult.report[0];
+    const reportHtml = runnerResult.report;
     Deno.writeFileSync(
       `${outputDir}/${pageName}.html`,
       new TextEncoder().encode(reportHtml.toString())
     );
 
-    const reportJson = runnerResult.report[1];
+    const reportJson = runnerResult.lhr;
     Deno.writeFileSync(
       `${outputDir}/${pageName}.json`,
       new TextEncoder().encode(reportJson.toString())
