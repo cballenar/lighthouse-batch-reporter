@@ -41,17 +41,21 @@ const handler: Deno.ServeHandler = (req) => {
                   const metricHeading = document.createElement('p');
                 
                   const unit = metrics[metric].unit === 'unitless' ? '' : 's';
-                  const score = metrics[metric].score.toFixed(1);
+                  const score = metrics[metric].score.toFixed(2);
 
-                  const min = (metrics[metric].min / 1000).toFixed(1);
-                  const max = (metrics[metric].max / 1000).toFixed(1);
-                  const avg = (metrics[metric].avg / 1000).toFixed(1);
+                  // Determine the number of decimal places.
+                  let decimalPlaces = 1;
+                  if (unit == "") decimalPlaces = 3;
 
+                  const min = (metrics[metric].min * (unit == '' ? 1 : .001)).toFixed(decimalPlaces);
+                  const max = (metrics[metric].max * (unit == '' ? 1 : .001)).toFixed(decimalPlaces);
+                  const avg = (metrics[metric].avg * (unit == '' ? 1 : .001)).toFixed(decimalPlaces);
+                  
                   const rangeString = min === max ? \`\${min}\${unit}\` : \`(\${min}-\${max}\${unit})\`;
                   const avgString = \`\${avg}\${unit}\`;
                   const mainString = avgString === rangeString ? avgString : \`\${avgString} \${rangeString}\`;
 
-                  const indicator = score < 0.33 ? '\\u{1F534}' : score < 0.66 ? '\\u{1F7E1}' : '\\u{1F7E2}';
+                  const indicator = score < 0.5 ? '\\u{1F534}' : score < 0.89 ? '\\u{1F7E1}' : '\\u{1F7E2}';
 
                   metricHeading.textContent = \`\${indicator} \${metric}: \${mainString}\`;
                   metricBlock.appendChild(metricHeading);
